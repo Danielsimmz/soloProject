@@ -12,7 +12,7 @@ const {
  */
 router.get("/", (req, res) => {
   console.log("getting items");
-  const queryText = `SELECT * FROM item`;
+  const queryText = `SELECT * FROM category`;
   pool
     .query(queryText)
     .then((result) => {
@@ -24,20 +24,51 @@ router.get("/", (req, res) => {
     });
 });
 
+router.get("/videos", (req, res) => {
+  console.log("getting videos");
+  const queryText = `SELECT * FROM videos`;
+  pool
+    .query(queryText)
+    .then((result) => {
+      res.send(result.rows);
+    })
+    .catch((error) => {
+      console.log("Error making SELECT from items", error);
+      res.sendStatus(500);
+    });
+});
+
+router.get("/videoss", (req, res) => {
+  // captures all videos associated with the category from database
+  const queryText = `SELECT category.name, array_agg(url) as videos FROM "videos"
+JOIN "category" ON videos.category_id = category.id
+GROUP BY category.name;`;
+  pool
+    .query(queryText)
+    .then((result) => {
+      res.send(result.rows);
+      console.log(result.rows);
+    })
+    .catch((error) => {
+      console.log(`Error on query ${error}`);
+      res.sendStatus(500);
+    });
+});
+
 /**
  * Add an item for the logged in user to the shelf
  */
 router.post("/", rejectUnauthenticated, (req, res) => {
-  console.log("Adding item to the stack");
+  console.log("Adding video to the stack", req.body);
 
-  const image = req.body.image_url;
-  const description = req.body.description;
+  const video = req.body.url;
+  const category_id = req.body.category_id;
   const user = req.user.id;
   const queryText = `
-    INSERT INTO item (image_url, description, user_id)
-    VALUES ($1, $2, $3)`;
+    INSERT INTO videos (video, category_id)
+    VALUES ($1, $2)`;
   pool
-    .query(queryText, [image, description, user])
+    .query(queryText, [video, category_id, user])
     .then(() => res.sendStatus(201))
     .catch(() => res.sendStatus(500));
 });
@@ -52,7 +83,7 @@ router.delete("/:id", rejectUnauthenticated, (req, res) => {
   console.log(`user_id from req.user.id: ${user_id}`);
 
   let queryText = `
-    DELETE FROM item WHERE id = $1 AND user_id = $2`;
+    DELETE FROM videos WHERE id = $1 AND user_id = $2`;
   pool
     .query(queryText, [id, user_id])
     .then(() => res.sendStatus(203))
