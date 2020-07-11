@@ -23,7 +23,7 @@ const videos = (state = [], action) => {
 
 const videoss = (state = [], action) => {
   switch (action.type) {
-    case "SET_VIDEOS":
+    case "SET_VIDEOSS":
       return action.payload;
     default:
       return state;
@@ -40,7 +40,7 @@ const showcategory = (state = [], action) => {
 };
 
 // user will be on the redux state at:
-// state.user
+// state.userReducer
 export default combineReducers({
   userReducer,
   videos,

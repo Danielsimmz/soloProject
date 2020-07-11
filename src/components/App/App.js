@@ -12,10 +12,12 @@ import Nav from "../Nav/Nav";
 import Footer from "../Footer/Footer";
 
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
-
+import AdminRoute from "../AdminRoute/AdminRoute";
 import AboutPage from "../AboutPage/AboutPage";
 import UserPage from "../UserPage/UserPage";
-import InfoPage from "../InfoPage/InfoPage";
+import AdminPage from "../AdminPage/AdminPage";
+import WelcomePage from "../WelcomePage/WelcomePage";
+import DetailsPage from "../DetailsPage/DetailsPage";
 
 import "./App.css";
 
@@ -27,14 +29,16 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <div>
+        <div className="container text-center">
           <Nav />
           <Switch>
             {/* Visiting localhost:3000 will redirect to localhost:3000/home */}
-            <Redirect exact from="/" to="/home" />
+            <Redirect exact from="/" to="/welcome" />
             {/* Visiting localhost:3000/about will show the about page.
             This is a route anyone can see, no login necessary */}
             <Route exact path="/about" component={AboutPage} />
+            {/*This page will pop up first when loaded and this will be the welcome page that user sees when they first load browser*/}
+            <Route exact path="/welcome" component={WelcomePage} />
             {/* For protected routes, the view could show one of several things on the same route.
             Visiting localhost:3000/home will show the UserPage if the user is logged in.
             If the user is not logged in, the ProtectedRoute will show the 'Login' or 'Register' page.
@@ -42,7 +46,9 @@ class App extends Component {
             <ProtectedRoute exact path="/home" component={UserPage} />
             {/* This works the same as the other protected route, except that if the user is logged in,
             they will see the info page instead. */}
-            <ProtectedRoute exact path="/info" component={InfoPage} />
+            <AdminRoute exact path="/admin" component={AdminPage} />
+            {/*This route takes ypu to the details page that shows the videos associated with the category */}
+            <ProtectedRoute exact path="/details" component={DetailsPage} />
             {/* If none of the other routes matched, we will show a 404. */}
             <Route render={() => <h1>404</h1>} />
           </Switch>

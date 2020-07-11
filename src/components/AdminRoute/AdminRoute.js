@@ -14,7 +14,7 @@ import RegisterPage from "../RegisterPage/RegisterPage";
 // by checking req.isAuthenticated for authentication
 // and by checking req.user for authorization
 
-const ProtectedRoute = (props) => {
+const AdminRoute = (props) => {
   // Using destructuring, this takes ComponentToProtect from component
   // prop and grabs all other props to pass them along to Route
   const {
@@ -26,8 +26,7 @@ const ProtectedRoute = (props) => {
   } = props;
 
   let ComponentToShow;
-
-  if (user.id) {
+  if (user.id && user.is_admin === true) {
     // if the user is logged in (only logged in users have ids)
     // show the component that is protected
     ComponentToShow = ComponentToProtect;
@@ -63,4 +62,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(ProtectedRoute);
+export default connect(mapStateToProps)(AdminRoute);
